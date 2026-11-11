@@ -1,5 +1,6 @@
 package ru.practicum.dto.event;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,8 +10,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Location {
+public class Location{
 
-    private Double lat;
-    private Double lon;
+    @NotNull(message = "Координаты обязательное поле")
+    private Float lat;
+
+    @NotNull(message = "Координаты обязательное поле")
+    private Float lon;
 }

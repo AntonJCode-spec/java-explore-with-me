@@ -13,7 +13,9 @@ import ru.practicum.ViewStats;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -33,20 +35,20 @@ public class StatsClientImpl implements StatsClient {
         String startStr = start.format(FORMATTER);
         String endStr = end.format(FORMATTER);
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromPath("/stats")
-                .queryParam("start", startStr)
-                .queryParam("end", endStr)
-                .queryParam("unique", unique);
-
+        Map<String, Object> params = new HashMap<>();
+        params.put("start", startStr);
+        params.put("end", endStr);
+        params.put("unique", unique);
         if (uris != null && !uris.isEmpty()) {
-            builder.queryParam("uris", uris);
+            params.put("uris", String.join(",", uris));
         }
 
         ResponseEntity<List<ViewStats>> response = restTemplate.exchange(
-                builder.toUriString(),
+                "/stats?start={start}&end={end}&unique={unique}&uris={uris}",
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
-                new ParameterizedTypeReference<>() {}
+                new ParameterizedTypeReference<>() {},
+                params
         );
 
         return response.getBody();

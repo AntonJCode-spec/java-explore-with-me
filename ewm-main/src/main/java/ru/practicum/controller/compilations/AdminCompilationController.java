@@ -1,0 +1,39 @@
+package ru.practicum.controller.compilations;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.dto.compilation.CompilationDto;
+import ru.practicum.dto.compilation.NewCompilationDto;
+import ru.practicum.dto.compilation.UpdateCompilationRequest;
+import ru.practicum.service.compilation.CompilationService;
+
+@RestController
+@RequestMapping(path = "/admin/compilations")
+@RequiredArgsConstructor
+public class AdminCompilationController {
+
+    private final CompilationService compilationService;
+
+    @PostMapping
+    public CompilationDto createNewCompilation(@RequestBody @Valid NewCompilationDto dto) {
+        return compilationService.createNewCompilation(dto);
+    }
+
+    @PatchMapping("/{compId}")
+    public CompilationDto updateCompilation(@PathVariable Long compId,
+                                            @RequestBody @Valid UpdateCompilationRequest dto) {
+        return compilationService.updateCompilation(compId, dto);
+    }
+
+    @DeleteMapping("/{compId}")
+    public void deleteCompilation(@PathVariable Long compId) {
+        compilationService.deleteCompilation(compId);
+    }
+}

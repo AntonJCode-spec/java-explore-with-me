@@ -28,9 +28,11 @@ import ru.practicum.model.Event;
 import com.querydsl.core.BooleanBuilder;
 import ru.practicum.model.EventState;
 import ru.practicum.model.QEvent;
+import ru.practicum.model.RequestStatus;
 import ru.practicum.model.User;
 import ru.practicum.storage.category.CategoryRepository;
 import ru.practicum.storage.event.EventRepository;
+import ru.practicum.storage.request.RequestRepository;
 import ru.practicum.storage.user.UserRepository;
 
 import java.time.LocalDateTime;
@@ -46,6 +48,7 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final StatsClient statsClient;
+    private final RequestRepository requestRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -246,29 +249,33 @@ public class EventServiceImpl implements EventService {
         if (rangeEnd != null) {
             builder.and(qEvent.eventDate.loe(rangeEnd));
         }
-//        if (onlyAvailable) {
-//            builder.and(qEvent.participantLimit) вернуться когда будет Таблица заявок
-//        }
 
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
         JPAQuery<Event> query = queryFactory
                 .selectFrom(qEvent)
-                .where(builder)
-                .offset(from)
-                .limit(size);
+                .where(builder);
 
         if (sort == EventSortValue.EVENT_DATE) {
             query.orderBy(qEvent.eventDate.asc());
-        } else {
-            query.orderBy(qEvent.id.asc());
         }
-        sendHit(request);
 
         List<Event> events = query.fetch();
 
+        if (onlyAvailable) {
+            events = events.stream()
+                    .filter(event -> {
+                        if (event.getParticipantLimit() == 0) return true;
+                        long confirmedCount = requestRepository.countByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED);
+                        return confirmedCount < event.getParticipantLimit();
+                    })
+                    .toList();
+        }
+
         List<String> uris = events.stream()
                 .map(event -> "/events/" + event.getId())
-                .collect(Collectors.toList());
+                .toList();
+
+        sendHit(request);
 
         List<ViewStats> stats = statsClient.getStats(
                 LocalDateTime.now().minusYears(1),
@@ -278,24 +285,35 @@ public class EventServiceImpl implements EventService {
         );
 
         Map<String, Long> viewsMap = stats.stream()
-                .collect(Collectors.toMap(
-                        ViewStats::getUri,
-                        ViewStats::getHits
-                ));
+                .collect(Collectors.toMap(ViewStats::getUri, ViewStats::getHits));
 
-        return events.stream()
+        if (sort == EventSortValue.VIEWS) {
+            events = events.stream()
+                    .sorted((e1, e2) -> {
+                        Long v1 = viewsMap.getOrDefault("/events/" + e1.getId(), 0L);
+                        Long v2 = viewsMap.getOrDefault("/events/" + e2.getId(), 0L);
+                        return v2.compareTo(v1);
+                    })
+                    .toList();
+        }
+        List<Event> paginatedEvents = events.stream()
+                .skip(from)
+                .limit(size)
+                .toList();
+
+        return paginatedEvents.stream()
                 .map(event -> {
                     String uri = "/events/" + event.getId();
                     Long views = viewsMap.getOrDefault(uri, 0L);
-                    return EventMapper.mapToEventShortDto(event, views); // Передаем views
+                    return EventMapper.mapToEventShortDto(event, views);
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private void sendHit(HttpServletRequest request) {
         EndpointHit hit = new EndpointHit();
         hit.setApp("ewm-main-service");
-        hit.setUri(request.getRequestURI()); // Например, "/events"
+        hit.setUri(request.getRequestURI());
         hit.setIp(request.getRemoteAddr());
         hit.setTimestamp(LocalDateTime.now());
         statsClient.hit(hit);

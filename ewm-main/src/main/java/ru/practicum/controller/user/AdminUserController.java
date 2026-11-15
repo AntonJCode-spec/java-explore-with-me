@@ -1,6 +1,5 @@
 package ru.practicum.controller.user;
 
-import com.fasterxml.jackson.databind.annotation.NoClass;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

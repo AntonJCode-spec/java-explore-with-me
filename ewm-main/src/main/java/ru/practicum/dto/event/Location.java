@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Location{
+public class Location {
 
     @NotNull(message = "Координаты обязательное поле")
     private Float lat;

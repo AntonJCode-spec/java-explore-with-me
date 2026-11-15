@@ -7,7 +7,6 @@ import ru.practicum.dto.event.EventSortValue;
 import ru.practicum.dto.event.NewEventDto;
 import ru.practicum.dto.event.UpdateEventAdminRequest;
 import ru.practicum.dto.event.UpdateEventUserRequest;
-import ru.practicum.model.Event;
 import ru.practicum.model.EventState;
 
 import java.time.LocalDateTime;

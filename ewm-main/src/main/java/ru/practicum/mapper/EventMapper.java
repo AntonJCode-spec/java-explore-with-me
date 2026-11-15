@@ -1,7 +1,6 @@
 package ru.practicum.mapper;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.dto.category.CategoryDto;
 import ru.practicum.dto.event.AdminStateAction;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;

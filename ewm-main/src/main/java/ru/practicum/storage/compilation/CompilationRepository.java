@@ -1,4 +1,4 @@
-package ru.practicum.storage;
+package ru.practicum.storage.compilation;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.model.Compilation;

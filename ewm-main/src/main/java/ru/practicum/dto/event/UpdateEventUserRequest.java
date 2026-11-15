@@ -29,7 +29,7 @@ public class UpdateEventUserRequest {
     private Location location;
     private Boolean paid;
 
-    @PositiveOrZero( message = "Количество участников не может быть меньше нуля")
+    @PositiveOrZero(message = "Количество участников не может быть меньше нуля")
     private Integer participantLimit;
     private Boolean requestModeration;
     private UserStateAction stateAction;

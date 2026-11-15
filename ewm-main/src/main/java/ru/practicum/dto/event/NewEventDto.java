@@ -40,7 +40,7 @@ public class NewEventDto {
 
     private boolean paid;
 
-    @PositiveOrZero( message = "Количество участников не может быть меньше нуля")
+    @PositiveOrZero(message = "Количество участников не может быть меньше нуля")
     private int participantLimit;
 
     private Boolean requestModeration;

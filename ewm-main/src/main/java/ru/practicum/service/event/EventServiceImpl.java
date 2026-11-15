@@ -216,9 +216,23 @@ public class EventServiceImpl implements EventService {
                 .limit(size);
 
         List<Event> events = query.fetch();
+        if (events.isEmpty()) {
+            return List.of();
+        }
+
+        List<Object[]> confirmedCount = requestRepository.countByEventIdsAndStatus(events.stream()
+                        .map(Event::getId)
+                        .toList(),
+                RequestStatus.CONFIRMED);
+
+        Map<Long, Long> confirmedMap = confirmedCount.stream()
+                .collect(Collectors.toMap(obj -> (Long)obj[0],
+                        obj -> (Long) obj[1]));
 
         return events.stream()
-                .map(EventMapper::mapToEventFullDto)
+                .map(event -> {
+                    return EventMapper.mapToEventFullDto(event, 0L, confirmedMap.getOrDefault(event.getId(), 0L));
+                })
                 .toList();
     }
 

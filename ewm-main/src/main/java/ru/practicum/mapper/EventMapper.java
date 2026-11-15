@@ -73,6 +73,13 @@ public class EventMapper {
         return dto;
     }
 
+    public static EventFullDto mapToEventFullDto(Event event, Long views, Long confirmedCount) {
+        EventFullDto dto = mapToEventFullDto(event);
+        dto.setViews(views);
+        dto.setConfirmedRequests(confirmedCount);
+        return dto;
+    }
+
     public static Event updateEventFields(Event eventToUpdate, UpdateEventUserRequest dto) {
         if (dto.getAnnotation() != null && !dto.getAnnotation().isBlank()) {
             eventToUpdate.setAnnotation(dto.getAnnotation());

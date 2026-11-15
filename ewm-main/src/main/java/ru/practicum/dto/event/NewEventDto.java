@@ -39,6 +39,7 @@ public class NewEventDto {
 
     private boolean paid;
 
+    @Size(min = 0, message = "Количество участников не может быть меньше нуля")
     private int participantLimit;
 
     private Boolean requestModeration;

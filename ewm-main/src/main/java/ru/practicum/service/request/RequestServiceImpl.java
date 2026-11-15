@@ -69,10 +69,10 @@ public class RequestServiceImpl implements RequestService {
         request.setRequester(user);
         request.setCreated(LocalDateTime.now());
 
-        if (event.getRequestModeration()) {
-            request.setStatus(RequestStatus.PENDING);
-        } else {
+        if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
             request.setStatus(RequestStatus.CONFIRMED);
+        } else {
+            request.setStatus(RequestStatus.PENDING);
         }
 
         requestRepository.save(request);

@@ -170,6 +170,9 @@ public class EventServiceImpl implements EventService {
                 }
             }
         }
+        if (dto.getEventDate() != null && dto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+            throw new BadRequestException("Ошибка валидации времени");
+        }
 
         EventMapper.updateEventFields(event, dto);
 
@@ -225,7 +228,7 @@ public class EventServiceImpl implements EventService {
                                                    boolean onlyAvailable, EventSortValue sort,
                                                    int from, int size, HttpServletRequest request) {
         if (rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
-            throw new DataConflictException("rangeStart не может быть позже rangeEnd");
+            throw new BadRequestException("rangeStart не может быть позже rangeEnd");
         }
 
         QEvent qEvent = QEvent.event;

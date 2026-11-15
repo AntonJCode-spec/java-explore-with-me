@@ -26,6 +26,8 @@ public class UpdateEventUserRequest {
     @Valid
     private Location location;
     private Boolean paid;
+
+    @Size(min = 0, message = "Количество участников не может быть меньше нуля")
     private Integer participantLimit;
     private Boolean requestModeration;
     private UserStateAction stateAction;

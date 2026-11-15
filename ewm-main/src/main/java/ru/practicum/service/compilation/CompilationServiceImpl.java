@@ -50,12 +50,6 @@ public class CompilationServiceImpl implements CompilationService {
             if (events.size() != dto.getEvents().size()) {
                 throw new EventNotFoundException("Одно или несколько событий не найдены");
             }
-
-            for (Event event : events) {
-                if (event.getState() != EventState.PUBLISHED) {
-                    throw new DataConflictException("В подборку можно добавлять только опубликованные события");
-                }
-            }
         }
 
         Compilation compilation = CompilationMapper.mapToCompilation(dto, events);

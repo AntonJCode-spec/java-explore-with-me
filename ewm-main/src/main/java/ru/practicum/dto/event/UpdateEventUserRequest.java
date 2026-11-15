@@ -2,6 +2,8 @@ package ru.practicum.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,7 +29,7 @@ public class UpdateEventUserRequest {
     private Location location;
     private Boolean paid;
 
-    @Size(min = 0, message = "Количество участников не может быть меньше нуля")
+    @PositiveOrZero( message = "Количество участников не может быть меньше нуля")
     private Integer participantLimit;
     private Boolean requestModeration;
     private UserStateAction stateAction;

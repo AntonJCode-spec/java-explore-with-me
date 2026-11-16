@@ -138,9 +138,10 @@ public class RequestServiceImpl implements RequestService {
         if (dto.getStatus() == EventRequestStatusUpdate.REJECTED) {
             for (Request request : requests) {
                 request.setStatus(RequestStatus.REJECTED);
-                requestRepository.save(request);
                 rejectedRequest.add(request);
             }
+
+            requestRepository.saveAll(requests);
             return RequestMapper.mapToStatusUpdateResult(confirmedRequest, rejectedRequest);
         }
 
@@ -159,16 +160,17 @@ public class RequestServiceImpl implements RequestService {
                 request.setStatus(RequestStatus.REJECTED);
                 rejectedRequest.add(request);
             }
-            requestRepository.save(request);
         }
+
+        requestRepository.saveAll(requests);
 
         if (participantLimit > 0 && currentCount >= participantLimit) {
             List<Request> allPending = requestRepository.findByEventIdAndStatus(eventId, RequestStatus.PENDING);
             for (Request pending : allPending) {
                 pending.setStatus(RequestStatus.REJECTED);
-                requestRepository.save(pending);
                 rejectedRequest.add(pending);
             }
+            requestRepository.saveAll(allPending);
         }
 
         return RequestMapper.mapToStatusUpdateResult(confirmedRequest, rejectedRequest);

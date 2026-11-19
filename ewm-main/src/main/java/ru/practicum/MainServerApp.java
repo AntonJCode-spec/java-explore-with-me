@@ -11,3 +11,4 @@ public class MainServerApp {
         SpringApplication.run(MainServerApp.class, args);
     }
 }
+вк

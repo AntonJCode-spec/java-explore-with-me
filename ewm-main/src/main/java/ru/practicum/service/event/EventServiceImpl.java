@@ -11,6 +11,8 @@ import ru.practicum.EndpointHit;
 import ru.practicum.ViewStats;
 import ru.practicum.client.StatsClient;
 import ru.practicum.dto.event.AdminStateAction;
+import ru.practicum.dto.event.EventForAdminDto;
+import ru.practicum.dto.event.EventForInitiatorDto;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
 import ru.practicum.dto.event.EventSortValue;
@@ -73,7 +75,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventFullDto> getEventsByInitiatorId(Long userId, int from, int size) {
+    public List<EventForInitiatorDto> getEventsByInitiatorId(Long userId, int from, int size) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("Пользователя с таким id не существует");
         }
@@ -81,12 +83,12 @@ public class EventServiceImpl implements EventService {
         List<Event> events = eventRepository.getEventByInitiatorId(userId, from, size);
 
         return events.stream()
-                .map(EventMapper::mapToEventFullDto)
+                .map(EventMapper::mapToEventForInitiatorDto)
                 .toList();
     }
 
     @Override
-    public EventFullDto findEventByInitiatorIdAndEventId(Long userId, Long eventId) {
+    public EventForInitiatorDto findEventByInitiatorIdAndEventId(Long userId, Long eventId) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("Пользователя с таким id не существует");
         }
@@ -94,7 +96,7 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findEventByInitiatorIdAndId(userId, eventId)
                 .orElseThrow(() -> new EventNotFoundException("Событие не найдено"));
 
-        return EventMapper.mapToEventFullDto(event);
+        return EventMapper.mapToEventForInitiatorDto(event);
     }
 
     @Override
@@ -142,7 +144,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventFullDto updateEventByAdmin(UpdateEventAdminRequest dto, Long eventId) {
+    public EventForAdminDto updateEventByAdmin(UpdateEventAdminRequest dto, Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("События с таким id не существует"));
 
@@ -176,7 +178,7 @@ public class EventServiceImpl implements EventService {
 
         EventMapper.updateEventFields(event, dto);
 
-        return EventMapper.mapToEventFullDto(eventRepository.save(event));
+        return EventMapper.mapToEventForAdminDto(eventRepository.save(event));
     }
 
     @Override

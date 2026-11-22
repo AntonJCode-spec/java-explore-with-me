@@ -1,6 +1,8 @@
 package ru.practicum.service.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import ru.practicum.dto.event.EventForAdminDto;
+import ru.practicum.dto.event.EventForInitiatorDto;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
 import ru.practicum.dto.event.EventSortValue;
@@ -16,15 +18,15 @@ public interface EventService {
 
     EventFullDto createEvent(NewEventDto newEventDto, Long userId);
 
-    List<EventFullDto> getEventsByInitiatorId(Long userId, int from, int size);
+    List<EventForInitiatorDto> getEventsByInitiatorId(Long userId, int from, int size);
 
-    EventFullDto findEventByInitiatorIdAndEventId(Long userId, Long eventId);
+    EventForInitiatorDto findEventByInitiatorIdAndEventId(Long userId, Long eventId);
 
     EventFullDto findEventById(Long eventId, HttpServletRequest request);
 
     EventFullDto updateEvent(UpdateEventUserRequest dto, Long userId, Long eventId);
 
-    EventFullDto updateEventByAdmin(UpdateEventAdminRequest dto, Long eventId);
+    EventForAdminDto updateEventByAdmin(UpdateEventAdminRequest dto, Long eventId);
 
     List<EventFullDto> findAllEventForAdmin(List<Long> users,
                                             List<EventState> states,

@@ -71,4 +71,7 @@ public class Event {
 
     @Column(name = "published_on")
     private LocalDateTime publishedOn;
+
+    @Column(name = "admin_comment")
+    private String adminComment;
 }

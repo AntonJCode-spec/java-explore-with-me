@@ -25,6 +25,7 @@ state TEXT NOT NULL,
 created_on TIMESTAMP NOT NULL,
 published_on TIMESTAMP,
 title TEXT NOT NULL,
+admin_comment TEXT,
 CONSTRAINT fk_event_category_id FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT,
 CONSTRAINT fk_event_initiator_id FOREIGN KEY (initiator_id) REFERENCES users(id) ON DELETE RESTRICT
 );

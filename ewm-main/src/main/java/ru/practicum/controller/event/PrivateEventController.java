@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.dto.event.EventForInitiatorDto;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.NewEventDto;
 import ru.practicum.dto.event.UpdateEventUserRequest;
@@ -33,14 +34,14 @@ public class PrivateEventController {
     private final RequestService requestService;
 
     @GetMapping
-    public List<EventFullDto> getEventsByInitiatorId(@PathVariable Long userId,
-                                                     @RequestParam(defaultValue = "0") int from,
-                                                     @RequestParam(defaultValue = "10") int size) {
+    public List<EventForInitiatorDto> getEventsByInitiatorId(@PathVariable Long userId,
+                                                             @RequestParam(defaultValue = "0") int from,
+                                                             @RequestParam(defaultValue = "10") int size) {
         return eventService.getEventsByInitiatorId(userId, from, size);
     }
 
     @GetMapping("/{eventId}")
-    public EventFullDto findEventByInitiatorIdAndEventId(@PathVariable Long userId,
+    public EventForInitiatorDto findEventByInitiatorIdAndEventId(@PathVariable Long userId,
                                                          @PathVariable Long eventId) {
         return eventService.findEventByInitiatorIdAndEventId(userId, eventId);
     }

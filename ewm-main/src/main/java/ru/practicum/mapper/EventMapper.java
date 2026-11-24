@@ -2,6 +2,8 @@ package ru.practicum.mapper;
 
 import lombok.experimental.UtilityClass;
 import ru.practicum.dto.event.AdminStateAction;
+import ru.practicum.dto.event.EventForAdminDto;
+import ru.practicum.dto.event.EventForInitiatorDto;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
 import ru.practicum.dto.event.Location;
@@ -19,6 +21,8 @@ import java.time.LocalDateTime;
 
 @UtilityClass
 public class EventMapper {
+
+    private static final String defaultComment = "Событие отклонено администратором без указания причины.";
 
     public static Event mapToEvent(NewEventDto dto, Category category, User user) {
         Event event = new Event();
@@ -44,27 +48,75 @@ public class EventMapper {
     }
 
     public static EventFullDto mapToEventFullDto(Event event) {
-        EventFullDto dto = new EventFullDto();
 
-        dto.setId(event.getId());
-        dto.setAnnotation(event.getAnnotation());
-        dto.setCategory(CategoryMapper.mapToCategoryDto(event.getCategory()));
-        dto.setConfirmedRequests(0L);
-        dto.setCreatedOn(event.getCreatedOn());
-        dto.setDescription(event.getDescription());
-        dto.setEventDate(event.getEventDate());
-        dto.setInitiator(UserMapper.mapToUserShortDto(event.getInitiator()));
         Location location = new Location(event.getLocation().getLat(), event.getLocation().getLon());
-        dto.setLocation(location);
-        dto.setPaid(event.getPaid());
-        dto.setParticipantLimit(event.getParticipantLimit());
-        dto.setPublishedOn(event.getPublishedOn());
-        dto.setRequestModeration(event.getRequestModeration());
-        dto.setState(event.getState());
-        dto.setTitle(event.getTitle());
-        dto.setViews(0L);
 
-        return dto;
+        return EventFullDto.builder()
+                .id(event.getId())
+                .annotation(event.getAnnotation())
+                .category(CategoryMapper.mapToCategoryDto(event.getCategory()))
+                .confirmedRequests(0L)
+                .createdOn(event.getCreatedOn())
+                .description(event.getDescription())
+                .eventDate(event.getEventDate())
+                .initiator(UserMapper.mapToUserShortDto(event.getInitiator()))
+                .location(location)
+                .paid(event.getPaid())
+                .participantLimit(event.getParticipantLimit())
+                .publishedOn(event.getPublishedOn())
+                .requestModeration(event.getRequestModeration())
+                .state(event.getState())
+                .title(event.getTitle())
+                .views(0L)
+                .build();
+    }
+
+    public static EventForInitiatorDto mapToEventForInitiatorDto(Event event) {
+        Location location = new Location(event.getLocation().getLat(), event.getLocation().getLon());
+
+        return EventForInitiatorDto.builder()
+                .id(event.getId())
+                .annotation(event.getAnnotation())
+                .category(CategoryMapper.mapToCategoryDto(event.getCategory()))
+                .confirmedRequests(0L)
+                .createdOn(event.getCreatedOn())
+                .description(event.getDescription())
+                .eventDate(event.getEventDate())
+                .initiator(UserMapper.mapToUserShortDto(event.getInitiator()))
+                .location(location)
+                .paid(event.getPaid())
+                .participantLimit(event.getParticipantLimit())
+                .publishedOn(event.getPublishedOn())
+                .requestModeration(event.getRequestModeration())
+                .state(event.getState())
+                .title(event.getTitle())
+                .views(0L)
+                .adminComment(event.getAdminComment())
+                .build();
+    }
+
+    public static EventForAdminDto mapToEventForAdminDto(Event event) {
+        Location location = new Location(event.getLocation().getLat(), event.getLocation().getLon());
+
+        return EventForAdminDto.builder()
+                .id(event.getId())
+                .annotation(event.getAnnotation())
+                .category(CategoryMapper.mapToCategoryDto(event.getCategory()))
+                .confirmedRequests(0L)
+                .createdOn(event.getCreatedOn())
+                .description(event.getDescription())
+                .eventDate(event.getEventDate())
+                .initiator(UserMapper.mapToUserShortDto(event.getInitiator()))
+                .location(location)
+                .paid(event.getPaid())
+                .participantLimit(event.getParticipantLimit())
+                .publishedOn(event.getPublishedOn())
+                .requestModeration(event.getRequestModeration())
+                .state(event.getState())
+                .title(event.getTitle())
+                .views(0L)
+                .adminComment(event.getAdminComment())
+                .build();
     }
 
     public static EventFullDto mapToEventFullDto(Event event, Long views) {
@@ -115,7 +167,7 @@ public class EventMapper {
         return eventToUpdate;
     }
 
-    public static Event updateEventFields(Event eventToUpdate, UpdateEventAdminRequest dto) {
+    public static Event  updateEventFields(Event eventToUpdate, UpdateEventAdminRequest dto) {
         if (dto.getAnnotation() != null && !dto.getAnnotation().isBlank()) {
             eventToUpdate.setAnnotation(dto.getAnnotation());
         }
@@ -147,6 +199,14 @@ public class EventMapper {
         }
         if (dto.getTitle() != null && !dto.getTitle().isBlank()) {
             eventToUpdate.setTitle(dto.getTitle());
+        }
+
+        if (dto.getStateAction() == AdminStateAction.REJECT_EVENT) {
+            if (dto.getCommentOnEvent() != null && !dto.getCommentOnEvent().isBlank()) {
+                eventToUpdate.setAdminComment(dto.getCommentOnEvent());
+            } else {
+                eventToUpdate.setAdminComment(defaultComment);
+            }
         }
         return eventToUpdate;
     }

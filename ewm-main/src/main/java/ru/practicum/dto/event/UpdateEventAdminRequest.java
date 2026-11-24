@@ -34,4 +34,5 @@ public class UpdateEventAdminRequest {
     private AdminStateAction stateAction;
     @Size(min = 3, max = 120, message = "Длина заголовка должна быть от 3 до 120 символов")
     private String title;
+    private String commentOnEvent;
 }
